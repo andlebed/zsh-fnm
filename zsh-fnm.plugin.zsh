@@ -9,7 +9,9 @@ fi
 
 # Add 'fnm' environment variables for 'zsh'
 # Add hook to change Node version on change directory
-eval "$(fnm env --shell zsh --use-on-cd)"
+local FNM_ENV=$(fnm env --version-file-strategy=recursive --use-on-cd --shell=zsh | \
+sed -r 's/fnm use.*/local out=$(fnm use --silent-if-unchanged)\nif [[ "$out" != "" ]]; then rehash; fi/')
+eval "$FNM_ENV"
 
 # Completions directory for `fnm` command
 local COMPLETIONS_DIR="${0:A:h}/completions"
@@ -28,3 +30,4 @@ fi
 
 # Generate and load completion in the background
 fnm completions --shell zsh >| "$COMPLETIONS_DIR/_fnm" &|
+
